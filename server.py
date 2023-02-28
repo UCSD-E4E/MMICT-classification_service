@@ -1,5 +1,7 @@
 from flask import Flask, request
 import requests
+from joblib import  load
+import json
 
 app = Flask(__name__)
 
@@ -12,13 +14,11 @@ def classify_route():
     # parse for the processed image
     content_type = request.headers.get('Content-Type')
     if (content_type == 'application/json'):
-        json = request.json
-        # example of how parsing data should look
-        json['example'] = 'new data'
-        image = json['image']
-        uid = json['uid']
+        request_data = request.json
+        image = request_data['image']
+        uid = request_data['uid']
         data = classify(image,uid)
-        return data
+        return json.dumps(data)
     else:
         return 'Content-Type not supported!'
 
@@ -26,14 +26,21 @@ def classify(array, uid):
     # future classification code
 
     # temporarily update progress bar
-    update_bar(uid=uid, progress=50)
+    # update_bar(uid=uid, progress=50)
+     
+    clf = load('res/ex_classifier.joblib')
+    output = clf.predict(array)
+
+    output = {
+        'data':output
+        }
 
     # return array of 1's and 0's
-    return array
+    return output
 
 def update_bar(uid, progress):
     payload = {'uid':uid, 'progress':progress}
-    r = requests.get('http://main-server/progress',params=payload)
+    _ = requests.get('http://main-server/progress',params=payload)
     
 
 if __name__ == '__main__':
