@@ -30,14 +30,40 @@ def ws_classify(ws):
         ws.send("REJECTED")
         return
 
-
+    # retrieve ID from the JSON data, assuming it has field called 'classifier_id'
+    classifier_id = classification_obj['classifier_id']
     ws.send('ACCEPTED')
     np_array = np.array(classification_obj['image_data'])
-    classification = classify(np_array)
+
+    # including id parameter
+    classification = classify(np_array, classifier_id)
     app.logger.debug(classification)
     ws.send('DONE')
     ws.send((classification))
     ws.close(0)
+
+# @sock.route('/ws-request-classifier')
+# def ws_request_classifier(ws):
+#     app.logger.debug("handling classifier request")
+#     data = ws.receive()
+
+#     # hypothetical function to get from json file
+#     request_obj = create_request_object(data)
+
+#     if request_obj is None:
+#         ws.send("REJECTED")
+#         return
+
+#     classifier_id = request_obj['classifier_id']
+
+#     # we can check if valid, but do we need when only dropdown to select possible options?
+#     # if classifier_id not in available_classifier_ids:
+#     #     ws.send("Invalid Classifier ID")
+#     #     return
+    
+#     ws.send('ACCEPTED')
+#     send_classifier_model(ws, classifier_id)
+#     ws.close(0)
 
 
 # validate that the incoming json has all the required fields
@@ -56,14 +82,25 @@ def create_classify_object(data):
         app.logger.error(e)
         return None
 
-
-def classify(array):
-    # future classification code
+# classify the given array
+# classifier_id is string name of (name)_classifier
+def classify(array, classifier_id):
 
     # temporarily update progress bar
     # update_bar(uid=uid, progress=50)
-     
-    clf = load('res/ex_classifier.joblib')
+
+    
+    # flag is array doesn't line up with classifier throw error?
+    # how to check that though
+
+    # try if the classifier_id is actually a real joblib
+    id = 'res/{}.joblib'.format(classifier_id)
+    try:
+        clf = load(id)
+    except Exception as e:
+        app.logger.error(e)
+        return None
+
     app.logger.warning("joblib loaded")
     output = clf.predict(array)
     output = output.tolist()
