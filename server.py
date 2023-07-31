@@ -7,7 +7,7 @@ from flask_sock import Sock
 import time # only needed for testing
 
 app = Flask(__name__)
-app.debug = True
+app.debug = False
 sock = Sock(app)
 
 @app.route("/")
