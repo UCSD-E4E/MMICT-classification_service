@@ -1,5 +1,5 @@
 # Base image
-FROM nvidia/cuda:11.4.2-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN pip3 install -r requirements.txt
 
 # Expose port
-EXPOSE 8000
+EXPOSE 5001
 
 # Start the application
 CMD ["python3", "server.py"]
