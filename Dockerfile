@@ -1,5 +1,6 @@
 # Base image
-FROM nvidia/cuda:11.4.2-cudnn8-runtime-ubuntu20.04
+#FROM nvidia/cuda:11.4.2-cudnn8-runtime-ubuntu20.04
+FROM --platform=linux/amd64 python:3.9-slim-buster
 
 # Set working directory
 WORKDIR /app
