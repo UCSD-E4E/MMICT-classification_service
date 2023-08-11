@@ -54,3 +54,4 @@ virtualenv-clone==0.5.7
 Werkzeug==2.2.3
 yarg==0.1.9
 zipp==3.10.0
+gunicorn==21.2.0
