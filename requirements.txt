@@ -48,7 +48,7 @@ tenacity==8.1.0
 terracotta==0.7.5
 toml==0.10.2
 tqdm==4.64.1
-urllib3==1.26.14
+urllib3==1.26.17
 virtualenv==20.16.6
 virtualenv-clone==0.5.7
 Werkzeug==2.2.3
