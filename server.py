@@ -5,6 +5,7 @@ import numpy as np
 import json
 from flask_sock import Sock
 from PIL import Image
+import boto3
 
 import time  # only needed for testing
 
@@ -160,5 +161,15 @@ def classify(array, classifier_id):
 
 
 if __name__ == "__main__":
+    s3 = boto3.client("s3")
+    bucket_name = "plantify-test-bucket"
+    object_key = "Classify.json"
+    local_file_name = "Classify.json"
+    s3.download_file(bucket_name, object_key, local_file_name)
+
+    # print the first line of classify.json
+    with open("Classify.json", "r") as f:
+        print(f.readline())
+
     app.run(debug=False, port=5001, host="0.0.0.0")
     # app.run(debug=True, port=5001)
