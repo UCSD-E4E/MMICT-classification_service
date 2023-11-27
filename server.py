@@ -1,26 +1,32 @@
 from flask import Flask, request
 import requests
-from joblib import  load
+from joblib import load
 import numpy as np
 import json
 from flask_sock import Sock
-import time # only needed for testing
+from PIL import Image
+
+import time  # only needed for testing
 
 app = Flask(__name__)
 app.debug = False
 sock = Sock(app)
 
+
 @app.route("/")
 def home():
     return "<h1>Classification Server</h1>"
 
-@sock.route('/echo')
+
+@sock.route("/echo")
 def ws_process(ws):
-    while(True):
+    while True:
         data = ws.receive()
         ws.send("Classification Server is echoing: " + data)
 
-@sock.route('/ws-classify')
+
+# ['Planetscope Superdove', 'Orbital Megalaser', 'Global Gigablaster']
+@sock.route("/ws-classify")
 def ws_classify(ws):
     app.logger.debug("handling classification")
     data = ws.receive()
@@ -31,16 +37,24 @@ def ws_classify(ws):
         return
 
     # retrieve ID from the JSON data, assuming it has field called 'classifier_id'
-    classifier_id = classification_obj['classifier_id']
-    ws.send('ACCEPTED')
-    np_array = np.array(classification_obj['image_data'])
+    classifier_id = classification_obj["classifier_id"]
+    ws.send("ACCEPTED")
+    np_array = np.array(classification_obj["image_data"]).reshape(
+        classification_obj["shape"]
+    )
+
+    # filter image based on classifier_id
+    np_array = filter_image(np_array, classifier_id)
+    tinted_image = Image.fromarray(np_array.astype("uint8"), "RGB")
+    tinted_image.save("tinted_image.png")
 
     # including id parameter
     classification = classify(np_array, classifier_id)
     app.logger.debug(classification)
-    ws.send('DONE')
+    ws.send("DONE")
     ws.send((classification))
     ws.close(0)
+
 
 # @sock.route('/ws-request-classifier')
 # def ws_request_classifier(ws):
@@ -60,10 +74,44 @@ def ws_classify(ws):
 #     # if classifier_id not in available_classifier_ids:
 #     #     ws.send("Invalid Classifier ID")
 #     #     return
-    
+
 #     ws.send('ACCEPTED')
 #     send_classifier_model(ws, classifier_id)
 #     ws.close(0)
+
+
+def filter_image(np_array, id):
+    if id == "Planetscope Superdove":
+        return filter_planetscope(np_array)
+    elif id == "Orbital Megalaser":
+        return filter_orbital(np_array)
+    elif id == "Global Gigablaster":
+        return filter_global(np_array)
+    else:
+        return np_array
+
+
+def filter_planetscope(np_array):
+    # tint red
+    np_array[:, :, 0] = np.clip(np_array[:, :, 0] + 50, 0, 255)
+
+    return np_array
+    pass
+
+
+def filter_orbital(np_array):
+    # tint blue
+    np_array[:, :, 2] = np.clip(np_array[:, :, 2] + 50, 0, 255)
+    return np_array
+    pass
+
+
+def filter_global(np_array):
+    # tint green
+    np_array[:, :, 1] = np.clip(np_array[:, :, 1] + 50, 0, 255)
+
+    return np_array
+    pass
 
 
 # validate that the incoming json has all the required fields
@@ -71,10 +119,10 @@ def create_classify_object(data):
     app.logger.warning("validating request: " + data)
     try:
         request_json = json.loads(data)
-        if 'classifier_id' not in request_json:
+        if "classifier_id" not in request_json:
             app.logger.warning("no classifier_id")
             return None
-        if 'image_data' not in request_json:
+        if "image_data" not in request_json:
             app.logger.warning("no image_data")
             return None
         return request_json
@@ -82,19 +130,18 @@ def create_classify_object(data):
         app.logger.error(e)
         return None
 
+
 # classify the given array
 # classifier_id is string name of (name)_classifier
 def classify(array, classifier_id):
-
     # temporarily update progress bar
     # update_bar(uid=uid, progress=50)
 
-    
     # flag is array doesn't line up with classifier throw error?
     # how to check that though
 
     # try if the classifier_id is actually a real joblib
-    id = 'res/{}.joblib'.format(classifier_id)
+    id = "res/{}.joblib".format(classifier_id)
     try:
         clf = load(id)
     except Exception as e:
@@ -106,15 +153,12 @@ def classify(array, classifier_id):
     output = output.tolist()
 
     app.logger.warning("predicted on array")
-    output_json = {
-        "status":"DONE",
-        "data":output
-        }
+    output_json = {"status": "DONE", "data": output}
 
     # return array of 1's and 0's
     return output
-  
 
-if __name__ == '__main__':
-    app.run(debug=False, port=5001, host='0.0.0.0')
+
+if __name__ == "__main__":
+    app.run(debug=False, port=5001, host="0.0.0.0")
     # app.run(debug=True, port=5001)
