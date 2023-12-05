@@ -3,6 +3,7 @@ import openeo
 # the central gateway to the OpenEO platform
 connection = openeo.connect("https://earthengine.openeo.org")
 
+# authentication is publically available
 connection.authenticate_basic("group1", "test123")
 
 # https://openeo.org/documentation/1.0/python/#creating-a-datacube
