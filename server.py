@@ -50,11 +50,41 @@ def ws_classify(ws):
     tinted_image.save("tinted_image.png")
 
     # including id parameter
-    classification = classify(np_array, classifier_id)
-    app.logger.debug(classification)
+    # classification = classify(np_array, classifier_id)
+    # app.logger.debug(classification)
     ws.send("DONE")
     ws.send((classification))
     ws.close(0)
+
+
+def filter_image(np_array, id):
+    if id == "Planetscope Superdove":
+        return filter_planetscope(np_array)
+    elif id == "Orbital Megalaser":
+        return filter_orbital(np_array)
+    elif id == "Global Gigablaster":
+        return filter_global(np_array)
+    else:
+        return np_array
+
+
+def filter_planetscope(np_array):
+    # tint red
+    np_array[:, :, 0] = np.clip(np_array[:, :, 0] + 50, 0, 255)
+    return np_array
+
+
+def filter_orbital(np_array):
+    # tint blue
+    np_array[:, :, 2] = np.clip(np_array[:, :, 2] + 50, 0, 255)
+    return np_array
+
+
+def filter_global(np_array):
+    # tint green
+    np_array[:, :, 1] = np.clip(np_array[:, :, 1] + 50, 0, 255)
+
+    return np_array
 
 
 # @sock.route('/ws-request-classifier')
@@ -79,40 +109,6 @@ def ws_classify(ws):
 #     ws.send('ACCEPTED')
 #     send_classifier_model(ws, classifier_id)
 #     ws.close(0)
-
-
-def filter_image(np_array, id):
-    if id == "Planetscope Superdove":
-        return filter_planetscope(np_array)
-    elif id == "Orbital Megalaser":
-        return filter_orbital(np_array)
-    elif id == "Global Gigablaster":
-        return filter_global(np_array)
-    else:
-        return np_array
-
-
-def filter_planetscope(np_array):
-    # tint red
-    np_array[:, :, 0] = np.clip(np_array[:, :, 0] + 50, 0, 255)
-
-    return np_array
-    pass
-
-
-def filter_orbital(np_array):
-    # tint blue
-    np_array[:, :, 2] = np.clip(np_array[:, :, 2] + 50, 0, 255)
-    return np_array
-    pass
-
-
-def filter_global(np_array):
-    # tint green
-    np_array[:, :, 1] = np.clip(np_array[:, :, 1] + 50, 0, 255)
-
-    return np_array
-    pass
 
 
 # validate that the incoming json has all the required fields
