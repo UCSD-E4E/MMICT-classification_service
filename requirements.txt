@@ -30,7 +30,7 @@ mercantile==1.2.1
 numpy==1.23.4
 packaging==21.3
 pandas==1.5.1
-Pillow==10.0.1
+Pillow==10.2.0
 pipenv==2022.10.25
 pipreqs==0.4.13
 platformdirs==2.5.2
