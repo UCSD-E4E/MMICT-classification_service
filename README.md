@@ -1,9 +1,9 @@
-build image: 
+building our Docker image: 
 
 docker build -t mmi-classification-websockets .
 
-run:
+running the Docker container (For Devs):
 
-docker run mmi-classification-websockets   
+docker run -p 5001:5001 mmi-classification-websockets  
 
-might need to pip install flask-sock but added to requirements.txt
+We are mapping the localhost port to 5001, so to check if its working use http://localhost:5001 
