@@ -3,7 +3,6 @@ FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-
 # Install system dependencies
 RUN apt-get update && \
     apt-get install -y python3-pip libpq-dev libgdal-dev gdal-bin
