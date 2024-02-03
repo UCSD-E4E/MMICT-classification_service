@@ -12,13 +12,18 @@ RUN apt-get update && \
 # Verify GDAL version, rasterio needs GDAL to be >= version 3.1
 RUN if [ $(gdal-config --version | cut -d '.' -f1,2) \< "3.1" ]; then echo "GDAL version installed is " $(gdal-config --version) && exit 1; fi
 
+# Symlink between python3 and python
+# This is a current workaround as running our server using my poetry entrypoint calls "python" instead of 3.10 which comes with our ubuntu image.
+# Issue link: https://github.com/python-poetry/poetry/issues/6841 
+RUN ln -s /bin/python3 /bin/python
+
 # Install Poetry
 RUN python3.10 -m pip install poetry
 
 # Set working directory
 WORKDIR /app
 
-# Copy application files, poetry lock file should be present in the same directory as the Dockerfile
+# Copy all application files, poetry lock file should be present in the same directory as our pyproject.toml file?
 COPY . /app
 
 # Install Python dependencies using poetry
@@ -27,9 +32,6 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 # Expose port
 EXPOSE 5001
 
-# Give permission to our container to run server.py as an executable
-RUN chmod 744 /app/server.py
-
 # Run our Flask app using poetry entrypoint
-ENTRYPOINT poetry run python3 server.py
+ENTRYPOINT ["poetry", "run", "classification-server"]
 

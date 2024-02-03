@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "MM-classification-service"
+name = "mm_classification"
 version = "0.1.0"
 packages = []
 description = "This is the Mangrove Monitoring classification service. "
@@ -7,7 +7,7 @@ authors = ["E4E - Mangrove Monitoring SWE Team"]
 
 # poetry entrypoint for running our Flask server
 [tool.poetry.scripts]
-classification-server = "server:main"
+classification-server = "mm_classification.server:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"
