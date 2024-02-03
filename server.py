@@ -113,8 +113,7 @@ def classify(array, classifier_id):
 
     # return array of 1's and 0's
     return output
-  
 
-if __name__ == '__main__':
+# callable function to run server, included this in order to define our poetry entrypoint
+if __name__ == "__main__":
     app.run(debug=False, port=5001, host='0.0.0.0')
-    # app.run(debug=True, port=5001)
