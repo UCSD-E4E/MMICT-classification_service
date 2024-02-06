@@ -20,4 +20,4 @@ RUN pip3 install -r requirements.txt
 EXPOSE 5001
 
 # Start the application
-CMD ["python3", "server.py"]
+CMD ["python3", "scraping_openeo_2.py"]
