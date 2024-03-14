@@ -26,12 +26,12 @@ WORKDIR /app
 # Copy all application files, poetry lock file should be present in the same directory as our pyproject.toml file?
 COPY . /app
 
-# Install Python dependencies using poetry
+# Install Python dependencies using poetry, poetry also generates an executable to run our server
 RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
 
 # Expose port
 EXPOSE 5001
 
 # Run our Flask app using poetry entrypoint
-ENTRYPOINT ["poetry", "run", "classification-server"]
+ENTRYPOINT ["/usr/local/bin/classification-server"]
 

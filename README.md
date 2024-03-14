@@ -1,10 +1,12 @@
 # Docker Info
 
 ## Building our Docker image: 
-"docker build -t mmi-classification-websockets ."
+Run this in the CLI: "docker build -t mmi-classification-websockets ."
+
+Make sure you are in the same directory as the Dockerfile, in this case the root directory of our classification service repo.
 
 ## Running the Docker Container (For Devs):
-"docker run -p 5001:5001 mmi-classification-websockets"
+Run this in the CLI: "docker run -p 5001:5001 mmi-classification-websockets"
 
 We are mapping the localhost port to 5001, so to check if its working use http://localhost:5001 and open this in a browser.
 
